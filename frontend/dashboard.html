@@ -38,6 +38,11 @@
       </form>
       <p id="pollMsg"></p>
     </article>
+    <article>
+        <header><h2>Mes sondages</h2></header>
+        <ul id="myPollsList"></ul>
+    </article>
+      
   </main>
 
   <script>
@@ -67,7 +72,10 @@
 
       const data = await res.json();
       if (res.ok) {
-        document.getElementById("pollMsg").textContent = "✅ Sondage créé avec succès ! Lien : " + data.link;
+        const pollLink = `${window.location.origin}${data.link}`;
+        document.getElementById("pollMsg").innerHTML = `
+        ✅ Sondage créé avec succès !<br>
+        <a href="${pollLink}" class="contrast">Voir le sondage</a>`;
         form.reset();
       } else {
         document.getElementById("pollMsg").textContent = "Erreur : " + (data.message || "Impossible de créer le sondage.");
@@ -78,6 +86,23 @@
         localStorage.removeItem("token");
         window.location.href = "login.html";
     });
+
+    async function loadUserPolls() {
+        const res = await fetch("/api/getUserPolls", {
+            headers: {
+            Authorization: "Bearer " + localStorage.getItem("token")
+            }
+        });
+        const polls = await res.json();
+        const list = document.getElementById("myPollsList");
+        list.innerHTML = "";
+        polls.forEach(poll => {
+            const li = document.createElement("li");
+            li.innerHTML = `<a href="/poll.html?id=${poll.id}">${poll.question}</a>`;
+            list.appendChild(li);
+        });
+        }
+    loadUserPolls(); // au chargement
 
   </script>
 </body>

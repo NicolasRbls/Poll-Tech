@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Résultats - PollTech</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.10/css/pico.min.css">
+</head>
+<body>
+  <main class="container">
+    <h1 id="question">Résultats du sondage</h1>
+    <div id="resultsContainer"></div>
+    <p><a href="dashboard.html">Retour au dashboard</a></p>
+  </main>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const pollId = urlParams.get("id");
+
+    if (!pollId) {
+      document.getElementById("resultsContainer").textContent = "Aucun ID fourni.";
+    } else {
+      fetch(`/api/getResults?id=${pollId}`)
+        .then(res => res.json())
+        .then(poll => {
+          document.getElementById("question").textContent = poll.question;
+          const container = document.getElementById("resultsContainer");
+          poll.options.forEach((opt, i) => {
+            const count = poll.votes[i];
+            const item = document.createElement("p");
+            item.textContent = `${opt} : ${count} vote${count > 1 ? "s" : ""}`;
+            container.appendChild(item);
+          });
+        })
+        .catch(() => {
+          document.getElementById("resultsContainer").textContent = "Erreur lors du chargement des résultats.";
+        });
+    }
+  </script>
+</body>
+</html>

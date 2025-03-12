@@ -11,6 +11,10 @@ const signup = require("./auth/signup");
 const login = require("./auth/login");
 const verifyToken = require("./auth/verifyToken");
 const getPoll = require("./poll/getPoll");
+const submitVote = require("./poll/submitVote");
+const getResults = require("./poll/getResults");
+const createPoll = require("./poll/createPoll");
+const getUserPolls = require("./poll/getUserPolls");
 
 
 // ➤ Routes publiques
@@ -28,6 +32,12 @@ app.get("/api/test", (req, res) => {
 });
 
 app.get("/api/getPoll", getPoll);
+app.post("/api/submitVote", submitVote);
+app.get("/api/getResults", getResults);
+app.post("/api/createPoll", createPoll);
+app.get("/api/getUserPolls", getUserPolls);
+
+
 
 
 module.exports.handler = serverless(app);

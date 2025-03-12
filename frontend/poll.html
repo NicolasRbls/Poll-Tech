@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Vote - PollTech</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.10/css/pico.min.css">
+</head>
+<body>
+  <main class="container">
+    <h1 id="question">Chargement du sondage...</h1>
+    <form id="voteForm" style="display:none">
+      <fieldset id="optionsContainer"></fieldset>
+      <button type="submit" class="contrast">Voter</button>
+    </form>
+    <p id="message"></p>
+    <p><a id="resultsLink" href="#">Voir les résultats</a></p>
+  </main>
+  <p>
+    <button id="copyBtn">📋 Copier le lien du sondage</button>
+  </p>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const pollId = urlParams.get("id");
+    const token = localStorage.getItem("token");
+
+    if (!localStorage.getItem("token")) {
+        window.location.href = "login.html";
+    }
+
+    if (!pollId) {
+      document.getElementById("message").textContent = "Aucun ID de sondage fourni.";
+    } else {
+      fetch(`/api/getPoll?id=${pollId}`)
+        .then(res => res.json())
+        .then(poll => {
+          document.getElementById("question").textContent = poll.question;
+          const container = document.getElementById("optionsContainer");
+          poll.options.forEach((opt, i) => {
+            const label = document.createElement("label");
+            label.innerHTML = `
+              <input type="radio" name="option" value="${i}" required>
+              ${opt}
+            `;
+            container.appendChild(label);
+          });
+          document.getElementById("voteForm").style.display = "block";
+          document.getElementById("resultsLink").href = `results.html?id=${pollId}`;
+        })
+        .catch(() => {
+          document.getElementById("message").textContent = "Erreur lors du chargement du sondage.";
+        });
+
+      document.getElementById("voteForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const optionIndex = parseInt(document.querySelector("input[name=option]:checked").value);
+        const res = await fetch("/api/submitVote", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ id: pollId, optionIndex })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById("message").textContent = "✅ Votre vote a été enregistré !";
+          document.getElementById("voteForm").remove();
+        } else {
+          document.getElementById("message").textContent = "Erreur : " + (data.message || "Impossible de voter.");
+        }
+      });
+    }
+
+    document.getElementById("copyBtn").addEventListener("click", () => {
+        const link = window.location.href;
+        navigator.clipboard.writeText(link).then(() => {
+            alert("Lien copié dans le presse-papiers !");
+        });
+    });
+
+  </script>
+</body>
+</html>
