@@ -1,0 +1,53 @@
+<!-- frontend/signup.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Inscription - PollTech</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.10/css/pico.min.css">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="window glass center">
+    <h1>Inscription</h1>
+    <form id="registerForm">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" required />
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <input type="password" name="password" required />
+      </div>
+      <button class="primary">Créer mon compte</button>
+      <p id="error" class="text-danger"></p>
+    </form>
+    <p>Déjà inscrit ? <a href="login.html">Connectez-vous</a></p>
+  </main>
+
+  <script>
+    const form = document.getElementById("registerForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = form.email.value;
+      const password = form.password.value;
+
+      const res = await fetch('/api/signup', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        window.location.href = "dashboard.html";
+      } else {
+        document.getElementById("error").innerText = data.message || "Erreur lors de l'inscription.";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!-- frontend/dashboard.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - PollTech</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.10/css/pico.min.css">
+  <script>
+    // Rediriger vers login si pas de token
+    if (!localStorage.getItem("token")) {
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><strong>PollTech</strong></li>
+            <li><a href="#" id="logoutBtn">Déconnexion</a></li>
+        </ul>
+    </nav>
+      
+  <main class="container">
+    <h1>Bienvenue sur ton tableau de bord</h1>
+
+    <article>
+      <header>
+        <h2>Créer un nouveau sondage</h2>
+      </header>
+      <form id="pollForm">
+        <label>Question :
+          <input type="text" name="question" required>
+        </label>
+        <label>Options (une par ligne) :
+          <textarea name="options" rows="4" required></textarea>
+        </label>
+        <button type="submit" class="contrast">Créer le sondage</button>
+      </form>
+      <p id="pollMsg"></p>
+    </article>
+  </main>
+
+  <script>
+    const form = document.getElementById("pollForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const token = localStorage.getItem("token");
+
+      const question = form.question.value.trim();
+      const options = form.options.value
+        .split("\n")
+        .map(opt => opt.trim())
+        .filter(opt => opt.length > 0);
+
+      if (options.length < 2) {
+        return document.getElementById("pollMsg").textContent = "Veuillez entrer au moins 2 options.";
+      }
+
+      const res = await fetch("/api/createPoll", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ question, options })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById("pollMsg").textContent = "✅ Sondage créé avec succès ! Lien : " + data.link;
+        form.reset();
+      } else {
+        document.getElementById("pollMsg").textContent = "Erreur : " + (data.message || "Impossible de créer le sondage.");
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        window.location.href = "login.html";
+    });
+
+  </script>
+</body>
+</html>
