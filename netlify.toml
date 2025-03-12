@@ -1,0 +1,10 @@
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/express/:splat"
+  status = 200
+
+[dev]
+  publish = "frontend"

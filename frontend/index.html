@@ -1,0 +1,39 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test API Express Netlify</title>
+</head>
+<body>
+  <h1>Test API</h1>
+  <button onclick="testAPI()">Tester API</button>
+
+  <script>
+    async function testAPI() {
+      try {
+        const response = await fetch('/api/test');
+        const contentType = response.headers.get("content-type");
+  
+        if (!response.ok) {
+          const errorText = await response.text();
+          alert("Erreur serveur : " + errorText);
+          return;
+        }
+  
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          alert("Réponse JSON : " + JSON.stringify(data));
+        } else {
+          const text = await response.text();
+          alert("Réponse texte : " + text);
+        }
+      } catch (err) {
+        console.error("Erreur fetch :", err);
+        alert("Erreur côté client : " + err.message);
+      }
+    }
+  </script>
+  
+</body>
+</html>
