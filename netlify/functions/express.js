@@ -16,6 +16,8 @@ const getResults = require("./poll/getResults");
 const createPoll = require("./poll/createPoll");
 const getUserPolls = require("./poll/getUserPolls");
 const deletePoll = require("./poll/deletePoll");
+const updatePoll = require("./poll/updatePoll");
+
 
 
 
@@ -39,9 +41,7 @@ app.get("/api/getResults", getResults);
 app.post("/api/createPoll", createPoll);
 app.get("/api/getUserPolls", getUserPolls);
 app.delete("/api/deletePoll", deletePoll);
-
-
-
+app.put("/api/updatePoll", updatePoll);
 
 
 module.exports.handler = serverless(app);

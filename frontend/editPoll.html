@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Modifier un sondage - PollTech</title>
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.10/css/pico.min.css">
+</head>
+<body>
+    <script src="navbar.js"></script>
+  <main class="container">
+    <h1>Modifier un sondage</h1>
+    <form id="editForm">
+      <label>Nouvelle question :
+        <input type="text" name="question" required>
+      </label>
+      <label>Options (une par ligne) :
+        <textarea name="options" rows="4" required></textarea>
+      </label>
+      <button type="submit" class="contrast">Valider les modifications</button>
+      <p id="msg"></p>
+    </form>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const pollId = params.get("id");
+    const token = localStorage.getItem("token");
+    const form = document.getElementById("editForm");
+
+    if (!token) window.location.href = "login.html";
+
+    fetch(`/api/getPoll?id=${pollId}`)
+      .then(res => res.json())
+      .then(poll => {
+        form.question.value = poll.question;
+        form.options.value = poll.options.join("\n");
+      })
+      .catch(() => {
+        document.getElementById("msg").textContent = "Erreur : sondage introuvable.";
+      });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const question = form.question.value.trim();
+      const options = form.options.value.trim().split("\n").map(opt => opt.trim()).filter(Boolean);
+
+      const res = await fetch("/api/updatePoll", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token
+        },
+        body: JSON.stringify({ id: pollId, question, options })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById("msg").textContent = "✅ Sondage mis à jour !";
+      } else {
+        document.getElementById("msg").textContent = "❌ " + (data.message || "Erreur de modification.");
+      }
+    });
+  </script>
+</body>
+</html>

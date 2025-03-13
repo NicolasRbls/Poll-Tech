@@ -94,11 +94,13 @@
                   <a href="/poll.html?id=${poll.id}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                     ${poll.question}
                   </a>
-                  <button onclick="deletePoll('${poll.id}')" 
-                    style="background: none; border: none; color: #888; font-size: 1rem; cursor: pointer; margin-left: 1rem;"
-                    aria-label="Supprimer" title="Supprimer">
-                    🗑
+                  <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <a href="/editPoll.html?id=${poll.id}" title="Modifier" style="font-size: 1rem;">✏️</a>
+                    <button onclick="deletePoll('${poll.id}')" 
+                    style="background: none; border: none; color: #888; font-size: 1rem; cursor: pointer; padding: 20px 0 0 0; line-height: 1; vertical-align: middle;"
+                    title="Supprimer" aria-label="Supprimer">🗑
                   </button>
+                  </div>
                 </div>
               `;
             list.appendChild(li);
