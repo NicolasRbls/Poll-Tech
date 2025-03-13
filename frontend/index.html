@@ -1,39 +1,101 @@
-<!-- frontend/index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Test API Express Netlify</title>
+  <title>PollTech - Accueil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.10/css/pico.min.css">
+  <style>
+  .hero {
+    background-color: #505050;
+    padding: 4rem 2rem;
+    text-align: center;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    color: #000000;
+  }
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  .feature {
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    background-color: #505050;
+    text-align: center;
+    color: #000000;
+  }
+  footer {
+    margin-top: 4rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #cacaca;
+  }
+
+  </style>
 </head>
 <body>
-  <h1>Test API</h1>
-  <button onclick="testAPI()">Tester API</button>
+  <script src="navbar.js"></script>
+  <main class="container">
 
+    <!-- Section intro -->
+    <section class="hero">
+      <h1>Bienvenue sur <strong>PollTech</strong> 🗳️</h1>
+      <p>Créez des sondages en un clic, partagez-les avec vos amis, et visualisez les résultats instantanément.</p>
+      <div id="cta"></div>
+    </section>
+
+    <!-- Fonctionnalités -->
+    <section>
+      <h2>Fonctionnalités</h2>
+      <div class="features">
+        <div class="feature">
+          <h3>👥 Comptes utilisateurs</h3>
+          <p>Inscription rapide et sécurisée pour créer et participer aux sondages.</p>
+        </div>
+        <div class="feature">
+          <h3>🗳️ Sondages personnalisés</h3>
+          <p>Posez vos propres questions et définissez les options de réponse librement.</p>
+        </div>
+        <div class="feature">
+          <h3>🔗 Partage facile</h3>
+          <p>Chaque sondage génère un lien unique à partager avec les participants.</p>
+        </div>
+        <div class="feature">
+          <h3>📊 Résultats en temps réel</h3>
+          <p>Consultez les résultats de vos sondages en direct avec une interface claire.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © 2025 - PollTech. Développé par Nicolas.
+    </footer>
+  </main>
+
+  <!-- Script de gestion du CTA selon connexion -->
   <script>
-    async function testAPI() {
-      try {
-        const response = await fetch('/api/test');
-        const contentType = response.headers.get("content-type");
-  
-        if (!response.ok) {
-          const errorText = await response.text();
-          alert("Erreur serveur : " + errorText);
-          return;
-        }
-  
-        if (contentType && contentType.includes("application/json")) {
-          const data = await response.json();
-          alert("Réponse JSON : " + JSON.stringify(data));
-        } else {
-          const text = await response.text();
-          alert("Réponse texte : " + text);
-        }
-      } catch (err) {
-        console.error("Erreur fetch :", err);
-        alert("Erreur côté client : " + err.message);
-      }
+    const token = localStorage.getItem("token");
+    const cta = document.getElementById("cta");
+
+    if (token) {
+      cta.innerHTML = `
+        <a href="dashboard.html" class="contrast">Accéder au tableau de bord</a>
+        <button onclick="logout()">Déconnexion</button>
+      `;
+    } else {
+      cta.innerHTML = `
+        <a href="signup.html" class="contrast">Créer un compte</a>
+        <a href="login.html">Se connecter</a>
+      `;
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      window.location.reload();
     }
   </script>
-  
 </body>
 </html>

@@ -13,12 +13,8 @@
   </script>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><strong>PollTech</strong></li>
-            <li><a href="#" id="logoutBtn">Déconnexion</a></li>
-        </ul>
-    </nav>
+  <script src="navbar.js"></script>
+
       
   <main class="container">
     <h1>Bienvenue sur ton tableau de bord</h1>
@@ -80,11 +76,6 @@
       } else {
         document.getElementById("pollMsg").textContent = "Erreur : " + (data.message || "Impossible de créer le sondage.");
       }
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("token");
-        window.location.href = "login.html";
     });
 
     async function loadUserPolls() {

@@ -1,12 +1,12 @@
 body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: #f0f0f0;
-  }
-  .window {
-    width: 400px;
-    padding: 2rem;
-  }
-  
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-color, #f8f9fa);
+  padding: 2rem;
+}
+main.container {
+  max-width: 400px;
+  width: 100%;
+}
