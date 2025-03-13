@@ -89,10 +89,42 @@
         list.innerHTML = "";
         polls.forEach(poll => {
             const li = document.createElement("li");
-            li.innerHTML = `<a href="/poll.html?id=${poll.id}">${poll.question}</a>`;
+            li.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                  <a href="/poll.html?id=${poll.id}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${poll.question}
+                  </a>
+                  <button onclick="deletePoll('${poll.id}')" 
+                    style="background: none; border: none; color: #888; font-size: 1rem; cursor: pointer; margin-left: 1rem;"
+                    aria-label="Supprimer" title="Supprimer">
+                    🗑
+                  </button>
+                </div>
+              `;
             list.appendChild(li);
         });
         }
+
+        async function deletePoll(id) {
+          if (!confirm("Voulez-vous vraiment supprimer ce sondage ?")) return;
+
+          const res = await fetch(`/api/deletePoll?id=${id}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token")
+            }
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            alert("Sondage supprimé.");
+            loadUserPolls();
+          } else {
+            alert("Erreur : " + (data.message || "Impossible de supprimer."));
+          }
+        }
+
     loadUserPolls(); // au chargement
 
   </script>

@@ -15,6 +15,8 @@ const submitVote = require("./poll/submitVote");
 const getResults = require("./poll/getResults");
 const createPoll = require("./poll/createPoll");
 const getUserPolls = require("./poll/getUserPolls");
+const deletePoll = require("./poll/deletePoll");
+
 
 
 // ➤ Routes publiques
@@ -36,6 +38,8 @@ app.post("/api/submitVote", submitVote);
 app.get("/api/getResults", getResults);
 app.post("/api/createPoll", createPoll);
 app.get("/api/getUserPolls", getUserPolls);
+app.delete("/api/deletePoll", deletePoll);
+
 
 
 
